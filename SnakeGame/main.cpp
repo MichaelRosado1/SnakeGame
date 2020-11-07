@@ -18,8 +18,8 @@ class Apple {
 
 class Game {
 public:
-    int height = 1;
-    int width = 1;
+    int height = 0;
+    int width = 0;
     
     Game(int height, int width) {
         this->height = height;
@@ -27,31 +27,48 @@ public:
         
     }
     
-    void board_Layout() {
+std::vector<std::vector<char>> board_Layout() {
       
-        char board_matrix[height][width];
+        std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
         
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-               //TODO: fill in game board with spaces or '+','|', or '-' characters
+    
+        for (int i = 0; i < board_matrix.size(); i++) {
+            for (int j = 0; j < board_matrix[i].size(); j++) {
+                /*
+               (0,0)       (0, width - 1)
+                 +---------+
+                 |         |
+                 |         |
+                 +---------+
+                 
+                 */
+                if (i == 0 || i == board_matrix.size() - 1) {
+                    board_matrix[i][j] = '*';
+                } else if (i != 0 && (j == 0 || j == board_matrix[i].size() - 1)) {
+                    board_matrix[i][j] = '*';
+                }
+                
             }
         }
-        
-        
-        
-        
+    return board_matrix;
         
     }
     
     void render() {
-        std::cout<<"Height is: "<<height<<std::endl;
-        std::cout<<"width is: "<<width<<std::endl;
+        std::vector<std::vector<char>> gameBoard = Game::board_Layout();
+        for (int i = 0; i < gameBoard.size(); i++) {
+            for (int j = 0; j < gameBoard[i].size(); j++) {
+                std::cout<<gameBoard[i][j];
+            }
+            std::cout<<std::endl;
+        }
+        
     }
 };
 
 int main() {
     
-    Game* game = new Game(10,20);
-    game->board_Layout();
+    Game* game = new Game(20,20);
+    game->render();
     
 }
