@@ -14,6 +14,7 @@ const std::tuple<int, int>DOWN {0,-1};
 const std::tuple<int, int>LEFT {-1,0};
 const std::tuple<int, int> RIGHT {1,0};
 
+
 class Snake {
     
 public:
@@ -21,8 +22,11 @@ public:
     std::tuple<int, int> direction;
     
     
-    Snake(std::vector<std::tuple<int, int>> bodyPos, std::tuple<int, int> startDirection) {
-        this->body = bodyPos;
+    Snake(std::tuple<int, int> startDirection) {
+        std::vector<std::tuple<int, int>> initialPosition;
+        std::tuple<int, int> begin {5,0};
+        initialPosition.push_back(begin);
+        this->body =initialPosition;
         this->direction = startDirection;
     }
     
@@ -35,9 +39,8 @@ public:
     }
     
     std::tuple<int,int> head() {
-        return this->body.at(0);
+//        return body.front();
     }
-    
 };
 
 class Apple {
@@ -52,8 +55,6 @@ public:
     Game(int height, int width) {
         this->height = height;
         this->width = width;
-        std::vector<std::tuple<int,int>> startingSnake{};
-        snake = new Snake(startingSnake, UP);
         
     }
     
@@ -96,9 +97,55 @@ public:
     }
 };
 
-int main() {
-    
-    Game* game = new Game(20,20);
+Game *game;
+Snake *snake;
+
+void startGame() {
+    game = new Game(20,20);
+    snake = new Snake(UP);
     game->render();
+}
+
+std::tuple<int, int> getUserInput() {
+    char input;
+    std::cin>>input;
+    if (input == 'w') {
+        return UP;
+    } else if (input == 'a') {
+        return LEFT;
+    } else if (input == 's') {
+        return DOWN;
+    } else if (input == 'd') {
+        return RIGHT;
+    } else {
+        std::cout<<"enter in terms of wasd\n";
+        return getUserInput();
+    }
+    
+}
+void updateSnake(std::tuple<int, int> input) {
+    
+}
+int main() {
+/*
+ startGame();
+ while (gameNotOver) {
+    getInput()
+    updateGame();
+    updateScore();
+ */
+    bool gameNotOver = true;
+    startGame();
+    while(gameNotOver) {
+        std::tuple<int, int> input = getUserInput();
+        updateSnake(input);
+        game->render();
+    }
+    
+    
+    
+    //getInput()
+    //updateGame()
+    
     
 }
