@@ -12,7 +12,7 @@
 const std::tuple<int, int> UP {1,0};
 const std::tuple<int, int>DOWN {0,-1};
 const std::tuple<int, int>LEFT {-1,0};
-const std::tuple<int, int> RIGHT {1,0};
+const std::tuple<int, int> RIGHT {0,1};
 
 
 class Snake {
