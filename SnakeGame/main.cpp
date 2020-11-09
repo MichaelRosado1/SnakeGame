@@ -125,6 +125,14 @@ std::tuple<int, int> getUserInput() {
     
 }
 void updateSnake(std::tuple<int, int> input) {
+    snake->direction = input;
+    int x = get<0>(input);
+    int y = get<1>(input);
+    
+    for (std::tuple<int, int> &tuple : snake->body) {
+        get<0>(tuple) += x;
+        get<1>(tuple) += y;
+    }
     
 }
 int main() {
