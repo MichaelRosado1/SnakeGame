@@ -23,10 +23,10 @@ public:
     
     
     Snake(std::tuple<int, int> startDirection) {
-        std::vector<std::tuple<int, int>> initialPosition;
-        std::tuple<int, int> begin {5,0};
-        initialPosition.push_back(begin);
-        this->body =initialPosition;
+        std::tuple<int, int> head {10,5};
+        std::tuple<int, int> bodyBegin {11,5};
+        body.push_back(head);
+        body.push_back(bodyBegin);
         this->direction = startDirection;
     }
     
@@ -39,7 +39,7 @@ public:
     }
     
     std::tuple<int,int> head() {
-//        return body.front();
+        return body[0];
     }
 };
 
@@ -47,22 +47,22 @@ class Apple {
     
 };
 
+Snake *snake;
 class Game {
 public:
     int height = 0;
     int width = 0;
-    Snake *snake;
     Game(int height, int width) {
         this->height = height;
         this->width = width;
         
     }
     
-        std::vector<std::vector<char>> board_Layout() {
+    std::vector<std::vector<char>> board_Layout() {
       
         std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
         
-        std::tuple<int,int> headPosition = snake->head();
+        std::tuple<int, int> headPosition = snake->head();
         
         std::vector<std::tuple<int, int>> bodyPositions = snake->body;
     
@@ -76,9 +76,11 @@ public:
                 
             }
         }
+        
             for (int i = 0; i <bodyPositions.size(); i++) {
                 board_matrix[get<0>(bodyPositions[i])][get<1>(bodyPositions[i])] = 'O';
             }
+            
             board_matrix[get<0>(headPosition)][get<1>(headPosition)] = 'X';
         
     return board_matrix;
@@ -86,7 +88,7 @@ public:
     }
     
     void render() {
-        std::vector<std::vector<char>> gameBoard = Game::board_Layout();
+        std::vector<std::vector<char>> gameBoard = this->board_Layout();
         for (int i = 0; i < gameBoard.size(); i++) {
             for (int j = 0; j < gameBoard[i].size(); j++) {
                 std::cout<<gameBoard[i][j];
@@ -98,7 +100,6 @@ public:
 };
 
 Game *game;
-Snake *snake;
 
 void startGame() {
     game = new Game(20,20);
