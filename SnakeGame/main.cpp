@@ -129,11 +129,13 @@ void updateSnake(std::tuple<int, int> input) {
     int x = get<0>(input);
     int y = get<1>(input);
     
-    for (std::tuple<int, int> &tuple : snake->body) {
-        get<0>(tuple) += x;
-        get<1>(tuple) += y;
-    }
+    int stepX = get<0>(snake->body[0]) + x;
+    int stepY = get<1>(snake->body[1]) +y;
     
+    //std::tuple<int, int> nextStep {{get<0>(snake->body[0]) += x,get<1>(snake->body[0]) += y}};
+    
+    std::tuple<int, int> nextStep {stepX, stepY};
+    snake->take_step(nextStep);
 }
 int main() {
 /*
