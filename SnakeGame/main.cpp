@@ -32,17 +32,8 @@ public:
     }
     
     void take_step(std::tuple<int, int> position) {
-        bool hasStepTouchedBody = false;
-        for (int i = 0; i < body.size(); i++) {
-            if (body.at(i) == position) {
-                hasStepTouchedBody = true;
-            }
-        }
-        if (!hasStepTouchedBody) {
             body.insert(body.begin(), position);
             body.pop_back();
-        }
-        
     }
     void set_direction(std::tuple<int, int> direction) {
         this->direction = direction;
@@ -124,22 +115,28 @@ std::tuple<int, int> getUserInput() {
         std::string error = "input too long";
         std::cout<<"Only 1 letter at a time\n";
         getUserInput();
-    }
-    
-    if (input == 'w') {
-        return UP;
-    } else if (input == 'a') {
-        return LEFT;
-    } else if (input == 's') {
-        return DOWN;
-    } else if (input == 'd') {
-        return RIGHT;
     } else {
-        std::cout<<"enter in terms of wasd\n";
-        return getUserInput();
+        switch (input) {
+            case 'w':
+                return UP;
+                break;
+                
+            case 'a':
+                return LEFT;
+                break;
+            case 's':
+                return DOWN;
+                break;
+            case 'd':
+                return RIGHT;
+                break;
+            default:
+                return getUserInput();
+                
+        }
     }
-    
 }
+
 void updateSnake(std::tuple<int, int> input) {
     snake->direction = input;
     int x = get<0>(input);
