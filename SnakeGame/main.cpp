@@ -24,8 +24,8 @@ public:
     
     
     Snake(std::tuple<int, int> startDirection) {
-        std::tuple<int, int> head {10,5};
-        std::tuple<int, int> bodyBegin {11,5};
+        std::tuple<int, int> head {10,10};
+        std::tuple<int, int> bodyBegin {11,10};
         body.push_back(head);
         body.push_back(bodyBegin);
         this->direction = startDirection;
@@ -109,32 +109,22 @@ void startGame() {
 }
 
 std::tuple<int, int> getUserInput() {
-    char input;
+    std::string input;
     std::cin>>input;
-    if (sizeof(input) > 1) {
-        std::string error = "input too long";
-        std::cout<<"Only 1 letter at a time\n";
-        getUserInput();
-    } else {
-        switch (input) {
-            case 'w':
-                return UP;
-                break;
-                
-            case 'a':
-                return LEFT;
-                break;
-            case 's':
-                return DOWN;
-                break;
-            case 'd':
-                return RIGHT;
-                break;
-            default:
-                return getUserInput();
-                
+    if (input.size() == 1) {
+        if (!input.compare("w")) {
+            return UP;
+        } else if (!input.compare("a")) {
+            return LEFT;
+        } else if (!input.compare("s")) {
+            return DOWN;
+        } else if (!input.compare("d")) {
+            return RIGHT;
         }
     }
+    std::cout<<"ENTER 1 LETTER\n";
+    return getUserInput();
+    
 }
 
 void updateSnake(std::tuple<int, int> input) {
@@ -143,7 +133,7 @@ void updateSnake(std::tuple<int, int> input) {
     int y = get<1>(input);
     
     int stepX = get<0>(snake->body[0]) + x;
-    int stepY = get<1>(snake->body[1]) +y;
+    int stepY = get<1>(snake->body[0]) +y;
     
     //std::tuple<int, int> nextStep {{get<0>(snake->body[0]) += x,get<1>(snake->body[0]) += y}};
     
