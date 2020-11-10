@@ -8,10 +8,11 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <exception>
 
-const std::tuple<int, int> UP {1,0};
-const std::tuple<int, int>DOWN {0,-1};
-const std::tuple<int, int>LEFT {-1,0};
+const std::tuple<int, int> UP {-1,0};
+const std::tuple<int, int>DOWN {1,0};
+const std::tuple<int, int>LEFT {0,-1};
 const std::tuple<int, int> RIGHT {0,1};
 
 
@@ -31,8 +32,17 @@ public:
     }
     
     void take_step(std::tuple<int, int> position) {
-        body.insert(body.begin(), position);
-        body.pop_back();
+        bool hasStepTouchedBody = false;
+        for (int i = 0; i < body.size(); i++) {
+            if (body.at(i) == position) {
+                hasStepTouchedBody = true;
+            }
+        }
+        if (!hasStepTouchedBody) {
+            body.insert(body.begin(), position);
+            body.pop_back();
+        }
+        
     }
     void set_direction(std::tuple<int, int> direction) {
         this->direction = direction;
@@ -110,6 +120,12 @@ void startGame() {
 std::tuple<int, int> getUserInput() {
     char input;
     std::cin>>input;
+    if (sizeof(input) > 1) {
+        std::string error = "input too long";
+        std::cout<<"Only 1 letter at a time\n";
+        getUserInput();
+    }
+    
     if (input == 'w') {
         return UP;
     } else if (input == 'a') {
