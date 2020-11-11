@@ -140,13 +140,17 @@ std::tuple<int, int> getUserInput() {
     if (input.size() == 1) {
         //checks if the input is w and the previous choice is NOT w
         //so the player can't turn into themeselves
-        if (!input.compare("w")) {
+        if (!input.compare("w") && previousChoice.compare("s")) {
+            previousChoice = "w";
             return UP;
-        } else if (!input.compare("a") ) {
+        } else if (!input.compare("a") && previousChoice.compare("d") ) {
+            previousChoice = "a";
             return LEFT;
-        } else if (!input.compare("s")) {
+        } else if (!input.compare("s") && previousChoice.compare("w")) {
+            previousChoice = "s";
             return DOWN;
-        } else if (!input.compare("d")) {
+        } else if (!input.compare("d") && previousChoice.compare("a")) {
+            previousChoice = "d";
             return RIGHT;
         }
     }
