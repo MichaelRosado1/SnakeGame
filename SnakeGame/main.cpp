@@ -14,6 +14,9 @@ const std::tuple<int, int> UP {-1,0};
 const std::tuple<int, int>DOWN {1,0};
 const std::tuple<int, int>LEFT {0,-1};
 const std::tuple<int, int> RIGHT {0,1};
+class Snake;
+class Apple;
+class Game;
 //copy of the gameboard to compare position to bounds
 std::vector<std::vector<char>> gameBoardCopy;
 //bool value to let us know when the game is finished
@@ -27,6 +30,8 @@ std::string previousChoice = "w";
     head and body position
  
  */
+
+
 class Snake {
 public:
     //stores the positions of the 'O' char's or body positions
@@ -63,10 +68,8 @@ public:
         return body[0];
     }
 };
-//
-class Apple {
-    
-};
+
+
 //Snake pointer used at the start of the game
 Snake *snake;
 
@@ -78,15 +81,19 @@ class Game {
 public:
     int height = 0;
     int width = 0;
+    
     Game(int height, int width) {
         this->height = height;
         this->width = width;
-        
     }
+    
+    
+
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
         //creates empty height X width board
         std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
+
         //tuple stores the x and y coordinate of the snakes head
         std::tuple<int, int> headPosition = snake->head();
         //vector of tuples to store all of the x and y values of every 'O' in the snakes body
@@ -113,6 +120,7 @@ public:
         return board_matrix;
         
     }
+    
     //loops through the updated board and prints it to the console
     void render() {
         std::vector<std::vector<char>> gameBoard = this->board_Layout();
@@ -125,8 +133,32 @@ public:
         
     }
 };
-
 Game *game;
+std::vector<std::tuple<int, int>> applePositions;
+std::tuple<int, int> apple;
+class Apple {
+    int xCord;
+    int yCord;
+    Apple() {
+        xCord = rand() % game->width + 1;
+        yCord = rand() % game->height + 1;
+        get<0>(apple) = xCord;
+        get<1>(apple) = yCord;
+        applePositions.push_back(apple);
+    }
+    
+    void generateNewApple() {
+        
+    }
+    
+    void deletePreviousApple() {
+        
+    }
+    void addAppleToBoard() {
+    }
+};
+
+
 //creates a new game and snake. Also renders board
 void startGame() {
     game = new Game(20,20);
