@@ -87,7 +87,6 @@ public:
         this->width = width;
     }
     
-    
 
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
@@ -117,8 +116,15 @@ public:
         //sets the snakes head coordinates(tuple) on the board
         board_matrix[get<0>(headPosition)][get<1>(headPosition)] = 'X';
         gameBoardCopy = board_matrix;
+        
         return board_matrix;
         
+    }
+    
+    void addAppleToBoard(int xCord, int yCord) {
+        std::vector<std::vector<char>> currentBoard = board_Layout();
+        currentBoard[xCord][yCord] = '@';
+        render();
     }
     
     //loops through the updated board and prints it to the console
@@ -134,27 +140,26 @@ public:
     }
 };
 Game *game;
-std::vector<std::tuple<int, int>> applePositions;
-std::tuple<int, int> apple;
+
 class Apple {
+public:
     int xCord;
     int yCord;
     Apple() {
         xCord = rand() % game->width + 1;
         yCord = rand() % game->height + 1;
-        get<0>(apple) = xCord;
-        get<1>(apple) = yCord;
-        applePositions.push_back(apple);
     }
     
     void generateNewApple() {
-        
+        xCord = rand() % game->width + 1;
+        yCord = rand() % game->height + 1;
     }
     
     void deletePreviousApple() {
         
     }
     void addAppleToBoard() {
+        game->addAppleToBoard(xCord, yCord);
     }
 };
 
@@ -167,26 +172,36 @@ void startGame() {
 }
 //Gets the users input(w,a,s,d for up down left right)
 std::tuple<int, int> getUserInput() {
+    int count = 0;
     std::string input;
     std::cin>>input;
+    if (count > 2) {
+        Apple apple;
+        apple.addAppleToBoard();
+    }
     if (input.size() == 1) {
         //checks if the input is w and the previous choice is NOT w
         //so the player can't turn into themeselves
         if (!input.compare("w") && previousChoice.compare("s")) {
+            count++;
             previousChoice = "w";
             return UP;
         } else if (!input.compare("a") && previousChoice.compare("d") ) {
             previousChoice = "a";
+            count++;
             return LEFT;
         } else if (!input.compare("s") && previousChoice.compare("w")) {
+            count++;
             previousChoice = "s";
             return DOWN;
         } else if (!input.compare("d") && previousChoice.compare("a")) {
+            count++;
             previousChoice = "d";
             return RIGHT;
         }
     }
     std::cout<<"ENTER 1 LETTER Or a different letter\n";
+    
     return getUserInput();
     
 }
