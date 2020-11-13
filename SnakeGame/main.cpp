@@ -124,12 +124,12 @@ public:
     void addAppleToBoard(int xCord, int yCord) {
         std::vector<std::vector<char>> currentBoard = board_Layout();
         currentBoard[xCord][yCord] = '@';
-        render();
+    
     }
     
     //loops through the updated board and prints it to the console
     void render() {
-        std::vector<std::vector<char>> gameBoard = this->board_Layout();
+        std::vector<std::vector<char>> gameBoard = board_Layout();
         for (int i = 0; i < gameBoard.size(); i++) {
             for (int j = 0; j < gameBoard[i].size(); j++) {
                 std::cout<<gameBoard[i][j];
@@ -151,51 +151,46 @@ public:
     }
     
     void generateNewApple() {
-        xCord = rand() % game->width + 1;
-        yCord = rand() % game->height + 1;
+        xCord = 10;
+        yCord = 10;
     }
     
     void deletePreviousApple() {
         
     }
-    void addAppleToBoard() {
+    void addApple() {
         game->addAppleToBoard(xCord, yCord);
     }
 };
 
-
+Apple *apple;
 //creates a new game and snake. Also renders board
 void startGame() {
     game = new Game(20,20);
     snake = new Snake(UP);
+    apple = new Apple();
+    apple->addApple();
     game->render();
 }
 //Gets the users input(w,a,s,d for up down left right)
 std::tuple<int, int> getUserInput() {
-    int count = 0;
+    
     std::string input;
     std::cin>>input;
-    if (count > 2) {
-        Apple apple;
-        apple.addAppleToBoard();
-    }
+    
     if (input.size() == 1) {
         //checks if the input is w and the previous choice is NOT w
         //so the player can't turn into themeselves
         if (!input.compare("w") && previousChoice.compare("s")) {
-            count++;
             previousChoice = "w";
             return UP;
         } else if (!input.compare("a") && previousChoice.compare("d") ) {
             previousChoice = "a";
-            count++;
             return LEFT;
         } else if (!input.compare("s") && previousChoice.compare("w")) {
-            count++;
             previousChoice = "s";
             return DOWN;
         } else if (!input.compare("d") && previousChoice.compare("a")) {
-            count++;
             previousChoice = "d";
             return RIGHT;
         }
