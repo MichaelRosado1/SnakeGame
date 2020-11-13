@@ -77,6 +77,32 @@ Snake *snake;
  game class handles all of the rendering and placing of the snake on the board
     will eventually keep track of score and maybe different game modes
  */
+class Apple {
+public:
+    int xCord;
+    int yCord;
+    Apple() {
+        xCord = 5;
+        yCord = 5;
+    }
+    
+    void generateNewApple() {
+        xCord = 10;
+        yCord = 10;
+    }
+    
+    void deletePreviousApple() {
+        
+    }
+    int getXcord() {
+        return this->xCord;
+        
+    }
+    int getYcord() {
+        return this->yCord;
+    }
+};
+
 class Game {
 public:
     int height = 0;
@@ -87,7 +113,6 @@ public:
         this->width = width;
     }
     
-
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
         //creates empty height X width board
@@ -115,18 +140,16 @@ public:
         
         //sets the snakes head coordinates(tuple) on the board
         board_matrix[get<0>(headPosition)][get<1>(headPosition)] = 'X';
+        Apple *apple = new Apple();
+        int x = apple->getXcord();
+        int y = apple->getYcord();
+        
+        board_matrix[x][y] = '@';
         gameBoardCopy = board_matrix;
         
         return board_matrix;
         
     }
-    
-    void addAppleToBoard(int xCord, int yCord) {
-        std::vector<std::vector<char>> currentBoard = board_Layout();
-        currentBoard[xCord][yCord] = '@';
-    
-    }
-    
     //loops through the updated board and prints it to the console
     void render() {
         std::vector<std::vector<char>> gameBoard = board_Layout();
@@ -141,27 +164,6 @@ public:
 };
 Game *game;
 
-class Apple {
-public:
-    int xCord;
-    int yCord;
-    Apple() {
-        xCord = rand() % game->width + 1;
-        yCord = rand() % game->height + 1;
-    }
-    
-    void generateNewApple() {
-        xCord = 10;
-        yCord = 10;
-    }
-    
-    void deletePreviousApple() {
-        
-    }
-    void addApple() {
-        game->addAppleToBoard(xCord, yCord);
-    }
-};
 
 Apple *apple;
 //creates a new game and snake. Also renders board
@@ -169,7 +171,6 @@ void startGame() {
     game = new Game(20,20);
     snake = new Snake(UP);
     apple = new Apple();
-    apple->addApple();
     game->render();
 }
 //Gets the users input(w,a,s,d for up down left right)
