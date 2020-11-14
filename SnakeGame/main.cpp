@@ -23,6 +23,8 @@ std::vector<std::vector<char>> gameBoardCopy;
 //bool value to let us know when the game is finished
 bool gameNotOver = true;
 std::string previousChoice = "w";
+bool snakeAteApple = false;
+bool gameStart = true;
 /*
  Snake class contains:
     constructor
@@ -57,6 +59,11 @@ public:
             gameNotOver = false;
             return;
         }
+        if(gameBoardCopy[xCord][yCord] == '@') {
+            snakeAteApple = true;
+        } else {
+            snakeAteApple = false;
+        }
             body.insert(body.begin(), position);
             body.pop_back();
     }
@@ -83,8 +90,8 @@ public:
     int xCord;
     int yCord;
     Apple() {
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
+        std::random_device rd;
+        std::mt19937 gen(rd());
         std::uniform_int_distribution<> distr(2, 18);
         xCord = distr(gen);
         yCord = distr(gen);
@@ -116,16 +123,23 @@ public:
         this->height = height;
         this->width = width;
     }
-    
+    std::vector<std::vector<char>> addAppleToBoard(std::vector<std::vector<char>>board_matrix) {
+        Apple *firstApple = new Apple();
+        board_matrix[firstApple->xCord][firstApple->getYcord()] = '@';
+        gameStart = false;
+        return board_matrix;
+    }
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
-        //creates empty height X width board
         std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
+        
+        //creates empty height X width board
+//        std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
 
         //tuple stores the x and y coordinate of the snakes head
-        std::tuple<int, int> headPosition = snake->head();
+        
         //vector of tuples to store all of the x and y values of every 'O' in the snakes body
-        std::vector<std::tuple<int, int>> bodyPositions = snake->body;
+        
     //loops through board and sets the bounds using '*'
         for (int i = 0; i < board_matrix.size(); i++) {
             for (int j = 0; j < board_matrix[i].size(); j++) {
@@ -137,21 +151,36 @@ public:
                 
             }
         }
+        std::vector<std::vector<char>> &boardRef = board_matrix;
+        placeSnakeOnBoard(boardRef);
+        gameBoardCopy = board_matrix;
+        
+        return board_matrix;
+        
+    }
+    void placeSnakeOnBoard(std::vector<std::vector<char>> &board_matrix) {
+        std::tuple<int, int> headPosition = snake->head();
+        std::vector<std::tuple<int, int>> bodyPositions = snake->body;
         //loops through bodyPositions vector to place the body parts of the snake on the board
         for (int i = 0; i <bodyPositions.size(); i++) {
             board_matrix[get<0>(bodyPositions[i])][get<1>(bodyPositions[i])] = 'O';
         }
         
         //sets the snakes head coordinates(tuple) on the board
+        
+        if (gameStart == true) {board_matrix = addAppleToBoard(board_matrix);};
+
+        if (snakeAteApple) {
+            Apple *apple = new Apple();
+            int x = apple->getXcord();
+            int y = apple->getYcord();
+            board_matrix[x][y] = '@';
+            snakeAteApple = false;
+        }
         board_matrix[get<0>(headPosition)][get<1>(headPosition)] = 'X';
-        Apple *apple = new Apple();
-        int x = apple->getXcord();
-        int y = apple->getYcord();
         
-        board_matrix[x][y] = '@';
-        gameBoardCopy = board_matrix;
         
-        return board_matrix;
+        
         
     }
     //loops through the updated board and prints it to the console
