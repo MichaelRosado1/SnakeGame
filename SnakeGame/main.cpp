@@ -9,6 +9,7 @@
 #include <vector>
 #include <tuple>
 #include <exception>
+#include <random>
 //Constants for snake movement
 const std::tuple<int, int> UP {-1,0};
 const std::tuple<int, int>DOWN {1,0};
@@ -82,8 +83,11 @@ public:
     int xCord;
     int yCord;
     Apple() {
-        xCord = 5;
-        yCord = 5;
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_int_distribution<> distr(2, 18);
+        xCord = distr(gen);
+        yCord = distr(gen);
     }
     
     void generateNewApple() {
