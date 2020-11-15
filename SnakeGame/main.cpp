@@ -50,17 +50,22 @@ public:
         body.push_back(bodyBegin);
         this->direction = startDirection;
     }
+    void addToBody(std::tuple<int, int> addOn) {
+        body.push_back(addOn);
+    }
     //checks if next step goes out of bounds, and if not, updates the snake body and head to shift in the direction desired
     void take_step(std::tuple<int, int> position) {
         int xCord = get<0>(position);
         int yCord = get<1>(position);
         if (gameBoardCopy[xCord][yCord] == '*') {
-            std::cout<<"game over";
+            std::cout<<"game over, you hit a boundry";
             gameNotOver = false;
             return;
         }
         if(gameBoardCopy[xCord][yCord] == '@') {
             snakeAteApple = true;
+            std::tuple<int, int> bodyAddOn {get<0>(body[body.size() - 1]) + get<0>(direction),get<1>(body[body.size() - 1]) + get<1>(direction)};
+            addToBody(bodyAddOn);
         } else {
             snakeAteApple = false;
         }
