@@ -18,6 +18,7 @@ const std::tuple<int, int> RIGHT {0,1};
 class Snake;
 class Apple;
 class Game;
+void createNewApple();
 //copy of the gameboard to compare position to bounds
 std::vector<std::vector<char>> gameBoardCopy;
 //bool value to let us know when the game is finished
@@ -57,7 +58,7 @@ public:
     void take_step(std::tuple<int, int> position) {
         int xCord = get<0>(position);
         int yCord = get<1>(position);
-        if (gameBoardCopy[xCord][yCord] == '*') {
+        if (gameBoardCopy[xCord][yCord] == '*' || gameBoardCopy[xCord][yCord] == 'O') {
             std::cout<<"game over, you hit a boundry";
             gameNotOver = false;
             return;
@@ -66,6 +67,10 @@ public:
             snakeAteApple = true;
             std::tuple<int, int> bodyAddOn {get<0>(body[body.size() - 1]) + get<0>(direction),get<1>(body[body.size() - 1]) + get<1>(direction)};
             addToBody(bodyAddOn);
+        
+            createNewApple();
+        
+            
         } else {
             snakeAteApple = false;
         }
@@ -96,24 +101,25 @@ public:
     int yCord;
     std::vector<std::tuple<int, int>> applePositions;
     Apple() {
+        std::tuple<int, int> apple = addNewApple();
+        applePositions.push_back(apple);
+        
+    }
+    std::tuple<int, int> addNewApple() {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> distr(2, 18);
         xCord = distr(gen);
         yCord = distr(gen);
         std::tuple<int, int> apple = {xCord, yCord};
-        applePositions.push_back(apple);
-        this->applePositions.push_back(apple);
-    }
-    
-    void generateNewApple() {
-        xCord = 10;
-        yCord = 10;
-        
+        if (applePositions.size() > 0) {
+            applePositions.pop_back();
+        }
+        return apple;
     }
     
     void deletePreviousApple() {
-        
+        applePositions.pop_back();
     }
     int getXcord() {
         return this->xCord;
@@ -194,6 +200,9 @@ public:
         
     }
 };
+void createNewApple() {
+    Apple *apple = new Apple();
+}
 Game *game;
 
 
