@@ -89,17 +89,22 @@ class Apple {
 public:
     int xCord;
     int yCord;
+    std::vector<std::tuple<int, int>> applePositions;
     Apple() {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> distr(2, 18);
         xCord = distr(gen);
         yCord = distr(gen);
+        std::tuple<int, int> apple = {xCord, yCord};
+        applePositions.push_back(apple);
+        this->applePositions.push_back(apple);
     }
     
     void generateNewApple() {
         xCord = 10;
         yCord = 10;
+        
     }
     
     void deletePreviousApple() {
@@ -113,7 +118,7 @@ public:
         return this->yCord;
     }
 };
-
+Apple *apple = new Apple();
 class Game {
 public:
     int height = 0;
@@ -123,14 +128,11 @@ public:
         this->height = height;
         this->width = width;
     }
-    std::vector<std::vector<char>> addAppleToBoard(std::vector<std::vector<char>>board_matrix) {
-        Apple *firstApple = new Apple();
-        board_matrix[firstApple->xCord][firstApple->getYcord()] = '@';
-        gameStart = false;
-        return board_matrix;
-    }
+   
+
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
+        
         std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
         
         //creates empty height X width board
@@ -151,6 +153,9 @@ public:
                 
             }
         }
+        
+        board_matrix[get<0>(apple->applePositions[0])][get<1>(apple->applePositions[0])] = '@';
+        
         std::vector<std::vector<char>> &boardRef = board_matrix;
         placeSnakeOnBoard(boardRef);
         gameBoardCopy = board_matrix;
@@ -168,19 +173,8 @@ public:
         
         //sets the snakes head coordinates(tuple) on the board
         
-        if (gameStart == true) {board_matrix = addAppleToBoard(board_matrix);};
-
-        if (snakeAteApple) {
-            Apple *apple = new Apple();
-            int x = apple->getXcord();
-            int y = apple->getYcord();
-            board_matrix[x][y] = '@';
-            snakeAteApple = false;
-        }
+        
         board_matrix[get<0>(headPosition)][get<1>(headPosition)] = 'X';
-        
-        
-        
         
     }
     //loops through the updated board and prints it to the console
@@ -198,12 +192,11 @@ public:
 Game *game;
 
 
-Apple *apple;
+
 //creates a new game and snake. Also renders board
 void startGame() {
     game = new Game(20,20);
     snake = new Snake(UP);
-    apple = new Apple();
     game->render();
 }
 //Gets the users input(w,a,s,d for up down left right)
