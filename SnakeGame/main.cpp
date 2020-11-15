@@ -36,6 +36,7 @@ bool gameStart = true;
  */
 
 
+
 class Snake {
 public:
     //stores the positions of the 'O' char's or body positions
@@ -63,19 +64,23 @@ public:
             gameNotOver = false;
             return;
         }
-        if(gameBoardCopy[xCord][yCord] == '@') {
+        if (checkIfSnakeAteApple(position)) {
             snakeAteApple = true;
             std::tuple<int, int> bodyAddOn {get<0>(body[body.size() - 1]) + get<0>(direction),get<1>(body[body.size() - 1]) + get<1>(direction)};
             addToBody(bodyAddOn);
-        
+            snakeAteApple = true;
             createNewApple();
-        
-            
-        } else {
-            snakeAteApple = false;
         }
-            body.insert(body.begin(), position);
-            body.pop_back();
+        body.insert(body.begin(), position);
+        body.pop_back();
+    }
+    bool checkIfSnakeAteApple(std::tuple<int, int> position) {
+        int xCord = get<0>(position);
+        int yCord= get<1>(position);
+        if(gameBoardCopy[xCord][yCord] == '@') {
+            return true;
+        }
+        return false;
     }
     //Lets us know what direction to move
     void set_direction(std::tuple<int, int> direction) {
@@ -101,35 +106,44 @@ public:
     int yCord;
     std::vector<std::tuple<int, int>> applePositions;
     Apple() {
-        std::tuple<int, int> apple = addNewApple();
-        applePositions.push_back(apple);
+        applePositions.push_back(addNewApple());
         
     }
     std::tuple<int, int> addNewApple() {
+        
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> distr(2, 18);
-        xCord = distr(gen);
-        yCord = distr(gen);
-        std::tuple<int, int> apple = {xCord, yCord};
-        if (applePositions.size() > 0) {
-            applePositions.pop_back();
+        this->xCord = distr(gen);
+        this->yCord = distr(gen);
+        std::tuple<int, int> apple = {this->xCord, this->yCord};
+        if (applePositions.size() > 1) {
+            deletePreviousApple();
         }
-        return apple;
+        applePositions.push_back(apple);
+        std::tuple<int, int> appleToReturn = {this->xCord, this->yCord};
+        printApplePositions();
+        return appleToReturn;
     }
-    
+    void printApplePositions() {
+        for (int i = 0; i < applePositions.size(); i++) {
+            std::cout<<get<0>(applePositions[i])<<get<1>(applePositions[i])<<"\n";
+        }
+    }
     void deletePreviousApple() {
         applePositions.pop_back();
+        printApplePositions();
+        std::cout<<"this code is being reached";
     }
     int getXcord() {
-        return this->xCord;
+        return xCord;
         
     }
     int getYcord() {
-        return this->yCord;
+        return yCord;
     }
 };
-Apple *apple = new Apple();
+Apple *gameApple = new Apple();
 class Game {
 public:
     int height = 0;
@@ -143,7 +157,7 @@ public:
 
     //board layout sets each element of the board, creating bounds for the player
     std::vector<std::vector<char>> board_Layout() {
-        
+       
         std::vector<std::vector<char>> board_matrix(width, std::vector<char>(height, ' '));
         
         //creates empty height X width board
@@ -164,13 +178,15 @@ public:
                 
             }
         }
-        
-        board_matrix[get<0>(apple->applePositions[0])][get<1>(apple->applePositions[0])] = '@';
-        
+    
+        board_matrix[get<0>(gameApple->applePositions[0])][get<1>(gameApple->applePositions[0])] ='@';
+
         std::vector<std::vector<char>> &boardRef = board_matrix;
         placeSnakeOnBoard(boardRef);
         gameBoardCopy = board_matrix;
-        
+        if (snakeAteApple) {
+            gameApple->addNewApple();
+        }
         return board_matrix;
         
     }
@@ -202,6 +218,7 @@ public:
 };
 void createNewApple() {
     Apple *apple = new Apple();
+    apple->deletePreviousApple();
 }
 Game *game;
 
