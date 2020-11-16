@@ -117,9 +117,7 @@ public:
         this->xCord = distr(gen);
         this->yCord = distr(gen);
         std::tuple<int, int> apple = {this->xCord, this->yCord};
-        if (applePositions.size() > 1) {
-            deletePreviousApple();
-        }
+        
         applePositions.push_back(apple);
         std::tuple<int, int> appleToReturn = {this->xCord, this->yCord};
         printApplePositions();
@@ -130,11 +128,6 @@ public:
             std::cout<<get<0>(applePositions[i])<<get<1>(applePositions[i])<<"\n";
         }
     }
-    void deletePreviousApple() {
-        applePositions.pop_back();
-        printApplePositions();
-        std::cout<<"this code is being reached";
-    }
     int getXcord() {
         return xCord;
         
@@ -144,6 +137,11 @@ public:
     }
 };
 Apple *gameApple = new Apple();
+
+void addAppleToBoard(std::vector<std::vector<char>> &boardRef,Apple *apple ) {
+    boardRef[get<0>(apple->applePositions[0])][get<1>(apple->applePositions[0])] ='@';
+    apple->printApplePositions();
+}
 class Game {
 public:
     int height = 0;
@@ -179,14 +177,18 @@ public:
             }
         }
     
-        board_matrix[get<0>(gameApple->applePositions[0])][get<1>(gameApple->applePositions[0])] ='@';
 
         std::vector<std::vector<char>> &boardRef = board_matrix;
         placeSnakeOnBoard(boardRef);
         gameBoardCopy = board_matrix;
         if (snakeAteApple) {
             gameApple->addNewApple();
+            snakeAteApple = false;
+            gameApple->printApplePositions();
+//            board_matrix[get<0>(gameApple->applePositions[0])][get<1>(gameApple->applePositions[0])] ='@'
         }
+        addAppleToBoard(boardRef, gameApple);
+
         return board_matrix;
         
     }
@@ -216,9 +218,9 @@ public:
         
     }
 };
+
 void createNewApple() {
     Apple *apple = new Apple();
-    apple->deletePreviousApple();
 }
 Game *game;
 
