@@ -18,7 +18,7 @@ const std::tuple<int, int> RIGHT {0,1};
 class Snake;
 class Apple;
 class Game;
-void createNewApple();
+void addNewApple();
 //copy of the gameboard to compare position to bounds
 std::vector<std::vector<char>> gameBoardCopy;
 //bool value to let us know when the game is finished
@@ -56,7 +56,7 @@ public:
         body.push_back(addOn);
     }
     //checks if next step goes out of bounds, and if not, updates the snake body and head to shift in the direction desired
-    void take_step(std::tuple<int, int> position) {
+    void take_step(std::tuple<int, int> position, Apple* apple) {
         int xCord = get<0>(position);
         int yCord = get<1>(position);
         if (gameBoardCopy[xCord][yCord] == '*' || gameBoardCopy[xCord][yCord] == 'O') {
@@ -65,11 +65,10 @@ public:
             return;
         }
         if (checkIfSnakeAteApple(position)) {
-            snakeAteApple = true;
             std::tuple<int, int> bodyAddOn {get<0>(body[body.size() - 1]) + get<0>(direction),get<1>(body[body.size() - 1]) + get<1>(direction)};
             addToBody(bodyAddOn);
+            
             snakeAteApple = true;
-            createNewApple();
         }
         body.insert(body.begin(), position);
         body.pop_back();
@@ -78,6 +77,7 @@ public:
         int xCord = get<0>(position);
         int yCord= get<1>(position);
         if(gameBoardCopy[xCord][yCord] == '@') {
+            snakeAteApple = true;
             return true;
         }
         return false;
@@ -106,10 +106,16 @@ public:
     int yCord;
     std::vector<std::tuple<int, int>> applePositions;
     Apple() {
-        applePositions.push_back(addNewApple());
-        
+//        applePositions.push_back(addNewApple());
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distr(2, 18);
+        this->xCord = distr(gen);
+        this->yCord = distr(gen);
+        std::tuple<int, int> apple = {this->xCord, this->yCord};
+        this->applePositions.push_back(apple);
     }
-    std::tuple<int, int> addNewApple() {
+    void addNewApple() {
         
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -117,15 +123,12 @@ public:
         this->xCord = distr(gen);
         this->yCord = distr(gen);
         std::tuple<int, int> apple = {this->xCord, this->yCord};
-        
-        applePositions.push_back(apple);
-        std::tuple<int, int> appleToReturn = {this->xCord, this->yCord};
+        this->applePositions.push_back(apple);
         printApplePositions();
-        return appleToReturn;
     }
     void printApplePositions() {
-        for (int i = 0; i < applePositions.size(); i++) {
-            std::cout<<get<0>(applePositions[i])<<get<1>(applePositions[i])<<"\n";
+        for (int i = 0; i < this->applePositions.size(); i++) {
+            std::cout<<get<0>(this->applePositions[i])<<get<1>(this->applePositions[i])<<"\n";
         }
     }
     int getXcord() {
@@ -139,7 +142,7 @@ public:
 Apple *gameApple = new Apple();
 
 void addAppleToBoard(std::vector<std::vector<char>> &boardRef,Apple *apple ) {
-    boardRef[get<0>(apple->applePositions[0])][get<1>(apple->applePositions[0])] ='@';
+    boardRef[get<0>(apple->applePositions[apple->applePositions.size() - 1])][get<1>(apple->applePositions[apple->applePositions.size() - 1])] ='@';
     apple->printApplePositions();
 }
 class Game {
@@ -183,10 +186,11 @@ public:
         gameBoardCopy = board_matrix;
         if (snakeAteApple) {
             gameApple->addNewApple();
-            snakeAteApple = false;
             gameApple->printApplePositions();
-//            board_matrix[get<0>(gameApple->applePositions[0])][get<1>(gameApple->applePositions[0])] ='@'
+            board_matrix[get<0>(gameApple->applePositions[0])][get<1>(gameApple->applePositions[0])] ='@';
+
         }
+        snakeAteApple = false;
         addAppleToBoard(boardRef, gameApple);
 
         return board_matrix;
@@ -219,9 +223,7 @@ public:
     }
 };
 
-void createNewApple() {
-    Apple *apple = new Apple();
-}
+
 Game *game;
 
 
@@ -272,7 +274,8 @@ void updateSnake(std::tuple<int, int> input) {
     //std::tuple<int, int> nextStep {{get<0>(snake->body[0]) += x,get<1>(snake->body[0]) += y}};
     
     std::tuple<int, int> nextStep {stepX, stepY};
-    snake->take_step(nextStep);
+    Apple *appleRef = gameApple;
+    snake->take_step(nextStep,appleRef);
 }
 
 int main() {
